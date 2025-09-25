@@ -107,11 +107,12 @@ export default function ItemForm({itemToUpdate}) {
                     <select
                         name="categoryId"
                         id="categoryId"
-                        required
                         value={item.categoryId}
                         onChange={handleChange}
                     >
-                        <option value="">Selecione uma categoria...</option>
+
+                        <option value=""></option>
+
                         {categories.map((category) => (
                             <option
                                 key={category.id}

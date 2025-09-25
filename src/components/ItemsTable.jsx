@@ -74,7 +74,7 @@ export default function ItemsTable() {
                             <td>#{item.id}</td>
                             <td>{item.name}</td>
                             <td>{item.quantity}</td>
-                            <td>{item.category.name}</td>
+                            <td>{item.category?.name}</td>
                             <td>
                                 <Link to={`/items/${item.id}`} className="button is-primary">
                                     Ver

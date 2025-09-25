@@ -47,7 +47,7 @@ export default function ShowItem() {
             </button>
 
             <div className="row">
-                <span>Categoria: {item.category.name}</span>
+                <span>Categoria: {item.category ? item.category.name : (<i>N/C</i>)}</span>
                 <span>Quantidade em estoque: {item.quantity}</span>
                 <span>Preço: R$ {currency(item.price).toString()}</span>
             </div>

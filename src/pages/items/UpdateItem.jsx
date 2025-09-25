@@ -22,7 +22,7 @@ export default function UpdateItem() {
                 description: targetItem.description,
                 price: targetItem.price,
                 quantity: targetItem.quantity,
-                categoryId: targetItem.category.id
+                categoryId: targetItem.category?.id
             });
         }
 
