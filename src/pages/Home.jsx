@@ -65,7 +65,7 @@ export default function Home() {
 
             </div>
 
-            <div class="table-grid">
+            <div className="table-grid">
                 <div>
                     <RecentItemsTable />
                 </div>

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useStock from "../hooks/useStock";
 import TableIndex from "./TableIndex";
-
+import ItemsFilter from "./ItemsFilter";
 
 export default function ItemsTable() {
     const {itemsController} = useStock();
@@ -10,49 +10,61 @@ export default function ItemsTable() {
     const [response, setResponse] = useState({});
     const [items, setItems] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
-    
-    const buildStates = (result) => {
-        setResponse(result);
-        setItems(result.data);
 
-        if (currentPage >= result.totalPages) {
-            setCurrentPage(curr => curr - 1);
-        }
-    }
+    const [filter, setFilter] = useState({});
 
-    useEffect(function() {
-        
-        async function fetchAndSetResponse() {
-            const result = await fetchItems();
-            buildStates(result);
-        }
-
-        fetchAndSetResponse();
-    }, [currentPage]);
-
-    const handleDelete = async (id) => {
-        try {
-            await itemsController.deleteItem(id);
-            const result = await fetchItems();
-            buildStates(result);
-        }
-        catch(error) {
-            console.log(error);
-        }
-    }
-
-    const fetchItems = async () => {
+    const fetchItems = useCallback(async () => {
         const result = await itemsController.listAll({
             page: currentPage,
             pageSize: 5,
             sortBy: 'updatedAt',
-            direction: 'DESC'
+            direction: 'DESC',
+            ...filter
         });
-        return result;
+
+        setResponse(result);
+        setItems(result.data);
+    }, [currentPage, filter, itemsController]);
+
+    useEffect(function () {
+        if (!response) {
+            return;
+        }
+
+        const totalPages = response.totalPages;
+
+        if (currentPage > 0 && currentPage >= totalPages) {
+            setCurrentPage(Math.max(0, totalPages - 1));
+        }
+        else if (currentPage < 0) {
+            setCurrentPage(0);
+        }
+    }, [response, currentPage]);
+
+    const handleDelete = useCallback(async (id) => {
+        try {
+            await itemsController.deleteItem(id);
+            fetchItems();
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }, [fetchItems, itemsController]);
+    
+    useEffect(function() {
+        fetchItems();
+    }, [fetchItems]);
+
+    if (! items) {
+        return (
+            <div>Loading...</div>
+        )
     }
 
     return (
         <>
+            <ItemsFilter setFilter={setFilter} />
+
             <TableIndex 
                 currentPage={currentPage}
                 totalPages={response.totalPages}

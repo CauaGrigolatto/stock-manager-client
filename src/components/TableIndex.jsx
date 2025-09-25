@@ -20,7 +20,7 @@ export default function TableIndex({currentPage, totalPages, setCurrentPage}) {
         <div className="table-index">
             <button 
                 onClick={handleDecrementPage} 
-                disabled={currentPage === 0} 
+                disabled={currentPage <= 0} 
                 className="change-index-button">
                 Anterior
             </button>
