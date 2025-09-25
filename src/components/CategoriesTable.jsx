@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useStock from "../hooks/useStock"
 import TableIndex from "./TableIndex";
+import CategoriesFilter from "./CategoriesFilter"
 
 export default function CategoriesTable() {
     const {categoriesController} = useStock();
@@ -9,39 +10,61 @@ export default function CategoriesTable() {
     const [currentPage, setCurrentPage] = useState(0);
     const [categories, setCategories] = useState([]);
 
-    useEffect(function() {
-        const fetchAndBuildStates = async () => {
-            const response = await fetchCategories();
-            buildStates(response);
-        }
+    const [filter, setFilter] = useState({});
 
-        fetchAndBuildStates();
-    }, [currentPage]);
-
-    const fetchCategories = async () => {
-        const response = await categoriesController.listAll({
+    const fetchCategories = useCallback(async () => {
+        const result = await categoriesController.listAll({
             page: currentPage,
             pageSize: 5,
             sortBy: 'name',
-            direction: 'ASC'
+            direction: 'ASC',
+            ...filter
         });
 
-        return response;
-    }
+        setResponse(result);
+        setCategories(result.data);
+    }, [currentPage, filter, categoriesController]);
 
-    const buildStates = (response) => {
-        setResponse(response);
-        setCategories(response.data);
-    }
+    useEffect(function() {
+        if (! response) {
+            return;
+        }
 
-    const handleDelete = async (id) => {
-        await categoriesController.deleteCategory(id);
-        const response = await fetchCategories();
-        buildStates(response);
+        const totalPages = response.totalPages;
+
+        if (currentPage > 0 && currentPage >= totalPages) {
+            setCurrentPage(Math.max(0, totalPages - 1));
+        }
+        else if (currentPage < 0) {
+            setCurrentPage(0);
+        }
+    }, [response, currentPage]);
+
+    const handleDelete = useCallback(async (id) => {
+        try {
+            await categoriesController.deleteCategory(id);
+            fetchCategories();
+        }
+        catch(error) {
+            console.log(error);
+        }
+
+    }, [fetchCategories, categoriesController]);
+
+    useEffect(function() {
+        fetchCategories();
+    }, [fetchCategories]);
+
+    if (! categories) {
+        return (
+            <div>Loading...</div>
+        )
     }
 
     return (
         <>
+            <CategoriesFilter setFilter={setFilter} />
+
             <TableIndex 
                 currentPage={currentPage}
                 totalPages={response.totalPages}
