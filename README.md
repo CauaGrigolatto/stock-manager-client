@@ -52,4 +52,4 @@ O cliente consome a API do repositório separado **stock-manager-api**.
 ---
 
 ## ✅ O que aprendi / por que fiz
-Projeto para praticar React moderno: componentização, hooks (incl. custom hooks), Context API, roteamento e integração com uma API real — focando em UX e gerenciamento de estado simples (paginação, refetch, atualizações após mutações).
+Projeto para praticar React moderno: componentização, hooks (incl. custom hooks), roteamento e integração com uma API real — focando em UX e gerenciamento de estado simples (paginação, refetch, atualizações após mutações).
