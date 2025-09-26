@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import useStock from "../hooks/useStock"
 import TableIndex from "./TableIndex";
 import CategoriesFilter from "./CategoriesFilter"
+import Swal from "sweetalert2";
+import swalFire from "../lib/swalFire";
 
 export default function CategoriesTable() {
     const {categoriesController} = useStock();
@@ -42,8 +44,12 @@ export default function CategoriesTable() {
 
     const handleDelete = useCallback(async (id) => {
         try {
-            await categoriesController.deleteCategory(id);
-            fetchCategories();
+            const result = await swalFire().confirmAction();
+
+            if (result.isConfirmed) {
+                await categoriesController.deleteCategory(id);
+                fetchCategories();
+            }
         }
         catch(error) {
             console.log(error);

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useStock from "../hooks/useStock";
 import TableIndex from "./TableIndex";
 import ItemsFilter from "./ItemsFilter";
+import swalFire from "../lib/swalFire";
 
 export default function ItemsTable() {
     const {itemsController} = useStock();
@@ -43,8 +44,13 @@ export default function ItemsTable() {
 
     const handleDelete = useCallback(async (id) => {
         try {
-            await itemsController.deleteItem(id);
-            fetchItems();
+            const result = await swalFire().confirmAction();
+            
+            if (result.isConfirmed) {
+                await itemsController.deleteItem(id);
+                fetchItems();
+            }
+
         }
         catch (error) {
             console.log(error);

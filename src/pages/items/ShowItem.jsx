@@ -3,6 +3,7 @@ import useStock from '../../hooks/useStock';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import currency from 'currency.js';
+import swalFire from '../../lib/swalFire';
 
 export default function ShowItem() {
     const params = useParams();
@@ -24,8 +25,12 @@ export default function ShowItem() {
 
     const handleDelete = async (id) => {
         try {
-            await itemsController.deleteItem(id);
-            navigate("/items");
+            const result = await swalFire().confirmAction();
+            
+            if (result.isConfirmed) {
+                await itemsController.deleteItem(id);
+                navigate("/items");
+            }
         }
         catch(error) {
             console.log(error);
