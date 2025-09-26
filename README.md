@@ -30,12 +30,12 @@ Arquitetura do código: componentização (src/components), pages (src/pages, sr
 
 ## 📁 Estrutura importante
 - src/
-  - components/ — ItemsTable, RecentItemsTable, RunningOutItemsTable, ItemForm, TableIndex
-  - hooks/ — useStock.js
-  - lib/ — itemsLib.js, categoriesLib.js, stockLib.js
-  - contexts/ — StockContext.jsx
-  - pages/ — Home.jsx, items/ (ListItems, ShowItem, CreateItem, UpdateItem)
-  - router.jsx, main.jsx, App.jsx
+  - components/ — Componentes do projeto
+  - hooks/ — Hooks personalizados
+  - lib/ — Libs de acesso à API
+  - contexts/ — Contextos da aplicação
+  - pages/ — Páginas da aplicação
+  - router.jsx - Definição das rotas
 
 ---
 
