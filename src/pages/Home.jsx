@@ -26,7 +26,6 @@ export default function Home() {
                     max: 10
                 })
             ]).then((values) => {
-                console.log(values);
                 setDiversityCount(values[0].data);
                 setTotalCount(values[1].data);
                 setRecentCount(values[2].data);

@@ -22,6 +22,9 @@ export default function ItemForm({itemToUpdate}) {
     const [categories, setCategories] = useState([]);
     const inputRef = useRef(null);
 
+    const [successMessage, setSuccessMessage] = useState(undefined);
+    const [errorMessage, setErrorMessage] = useState(undefined);
+    
     useEffect(function() {
         async function fetchAndSetResponse() {
             const result = await categoriesController.listAll({
@@ -41,19 +44,24 @@ export default function ItemForm({itemToUpdate}) {
         })
     }
 
-    const handleSubmit = (ev) => {
+    const handleSubmit = async (ev) => {
         ev.preventDefault();
-        try {
-            console.log(item);
-            
+        try {      
+            let response = undefined;
+
             if (itemToUpdate) {
-                itemsController.updateItem(item);
+                response = await itemsController.updateItem(item);
+                handleFeedback(response);
             }
             else {
-                itemsController.saveItem(item);
-                setItem(defaultItem);
+                response = await itemsController.saveItem(item);
+                
+                if (response.status == 200) {
+                    setItem(defaultItem);
+                }
             }
 
+            handleFeedback(response);
             inputRef.current.focus();
         }
         catch(err) {
@@ -61,8 +69,40 @@ export default function ItemForm({itemToUpdate}) {
         }
     }
 
+    const handleFeedback = (response) => {
+        if (response) {
+            if (response.status == 200) {
+                setSuccessMessage(response.message);
+                setErrorMessage(undefined);
+            }
+            else {
+                let error = response.message + '\n';
+
+                for (let key in response.data) {
+                    const obj = response.data[key];
+                    error = obj.message + '\n';
+                }
+
+                setErrorMessage(error);
+                setSuccessMessage(undefined);
+            }
+        }
+    }
+
     return (
         <form onSubmit={handleSubmit} >
+            {successMessage ? (
+                <div className="feedback-container success">
+                    {successMessage}
+                </div>
+            ) : null}
+
+            {errorMessage ? (
+                <div className="feedback-container error">
+                    {errorMessage}
+                </div>
+            ) : null}
+
             <div className="row">
                 <div>
                     <label htmlFor="name">Nome</label>
